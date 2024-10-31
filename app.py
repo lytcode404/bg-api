@@ -4,7 +4,9 @@ from backgroundremover.bg import remove
 from io import BytesIO
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all origins
+
+# Allow CORS from localhost:3000
+CORS(app, origins=["http://localhost:3000"])
 
 
 def remove_bg(data):
