@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Image Generator</title>
+</head>
+<body>
+    <h1>Upload Image to Gemini</h1>
+    <input type="file" id="file-input">
+    <button id="upload-btn">Generate</button>
+    
+    <h2>Generated Output</h2>
+    <pre id="output"></pre>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const output = document.getElementById('output');
+
+        uploadBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file) {
+                output.textContent = "Please select a file.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            output.textContent = "Processing...";
+
+            try {
+                const response = await axios.post('http://127.0.0.1:5000/generate', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                if (response.data.response) {
+                    output.textContent = JSON.stringify(JSON.parse(response.data.response), null, 2);
+                } else {
+                    output.textContent = "No response received from the server.";
+                }
+            } catch (error) {
+                console.error(error);
+                output.textContent = `Error: ${error.response ? error.response.data : error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
